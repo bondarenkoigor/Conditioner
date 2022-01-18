@@ -1,11 +1,11 @@
 #include<iostream>
 
-class room
+class Room
 {
 private:
 	double temperature;
 public:
-	room()
+	Room()
 	{
 		this->temperature = 25;
 	}
@@ -23,62 +23,54 @@ class conditioner
 {
 private:
 	bool isOn;
-	double temperature;
-	room Room;
+	Room* room;
+	conditioner() {}
 public:
-	conditioner()
+	conditioner(Room* room)
 	{
 		isOn = false;
-		temperature = 25;
+		this->room = room;
 	}
 	void setTemp(double newtemp)
 	{
-		if (this->isOn) 
+		if (this->isOn)
 		{
-			this->temperature = newtemp;
-			this->Room.setTemp(newtemp);
+			this->room->setTemp(newtemp);
 		}
 	}
 	void switchCondition()
 	{
-		this->isOn += 1;
-	}
-	double getTemp()
-	{
-		return temperature;
-	}
-	bool getIsOn()
-	{
-		return isOn;
-	}
-	room getRoom()
-	{
-		return Room;
+		this->isOn = !this->isOn;
 	}
 };
 
 class pult
 {
+private:
+	conditioner* cond;
 public:
-	void setTemp(conditioner& conditioner, double newtemp)
+	pult(conditioner* someCond)
 	{
-			conditioner.setTemp(newtemp);
+		this->cond = someCond;
 	}
-	void switchCondition(conditioner& conditioner)
+	void setTemp(double newtemp)
 	{
-		conditioner.switchCondition();
+		cond->setTemp(newtemp);
+	}
+	void switchCondition()
+	{
+		cond->switchCondition();
 	}
 };
 
 int main()
 {
-	conditioner cond;
-	pult pult;
+	Room room;
+	conditioner cond(&room);
+	pult pult(&cond);
 
-	std::cout << cond.getRoom().getTemp() << "\n";
-
-	pult.switchCondition(cond);
-	pult.setTemp(cond, 20);
-
-	std::cout << cond.getRoom().getTemp() << "\n";
+	std::cout << room.getTemp() << "\n";
+	pult.switchCondition();
+	pult.setTemp(20);
+	std::cout << room.getTemp() << "\n";
 }
